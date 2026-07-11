@@ -206,6 +206,8 @@
 <script>
 const SHEET_ID = "18vIz9_qpwZ29bz5xSZY8Tg7t9fVGLYdCwe1krFKZFPI";
 const gviz = name => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
+// 응답 저장용 앱스크립트 웹앱 (비공개 응답 시트에 익명 기록)
+const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbyqkgbZlSWrxjOaVvpMBnU57zlQE0RhlFhocvactlYZt3nMAdB8BcMDf533FRbo1g6PnA/exec";
 
 // ---- fallback data (시트 못 읽을 때 대비) ----
 const FALLBACK_Q = [["광고영상이나 뮤직비디오를 볼 때, 색감이나 소품 등 화면구성을 눈여겨 보는 편이다.","A"],["발표자료(PPT)는 기왕이면 이쁘게 만드는 것이 좋다.","A"],["인터넷이나 책 표지에서 예쁜 글씨체를 보면 무슨 폰트인지 궁금하다.","A"],["스마트폰으로 동영상을 찍고 재밌게 편집해본 적이 있다.","A"],["판타지, SF영화의 특수효과 메이킹 영상을 보는 것을 좋아한다.","A"],["스마트폰의 테마나 바탕화면을 꾸미는데 시간을 할애하는 경우가 종종있다.","A"],["영화 포스터나 예쁜 광고물을 버리지 않고 보관했던 적이 있다.","A"],["1인 미디어에 관심이 많아 영상제작을 해보고 싶다.","A"],["등하교길, 이동시에 즐겨찾는 웹툰/웹소설이 있다.","B"],["만화카페에 종종 가서 시간을 보낸다.","B"],["사람, 동물을 캐릭터화 시켜서 그리는 것을 좋아한다.","B"],["영화, 애니메이션, 만화, 게임, 소설과 같이 스토리가 있는 시각매체를 좋아한다.","B"],["집에 직접 구매한 만화책이 있다.","B"],["웹사이트를 통해 좋아하는 게임 캐릭터의 설정이나 디자인을 찾아보곤 한다.","B"],["좋아하는 만화/웹툰작가나 게임/애니메이션 제작사를 나열할 수 있다.","B"],["안보고 그릴 수 있는 캐릭터가 있다.","B"],["전자제품을 선택할 때, 기능보다는 디자인에 무게를 두는 편이다.","C"],["길 가다가 보이는 자동차들의 디자인을 살펴보는 것이 좋다.","C"],["생활에 불편한 요소를 개선하는 제품디자인을 하고 싶다.","C"],["굿즈나 팬시제품 등 디자인 소품에 관심이 많다.","C"],["형태사진을 찍을 때, 사물이 가진 예쁜 각도를 찾아 설정하는 편이다.","C"],["자신이 생각하는 머리 속 이미지를 3D(입체)로 스케치할 수 있다.","C"],["평소에 주위 물체를 세심하게 관찰하는 편이다.","C"],["사물을 고를 때 디자인 요소 중 재질과 컬러에 민감한 편이다.","C"],["가구를 직접 조립하거나 새로운 다자인 구상을 즐기는 편이다.","D"],["조명기기나 인테리어 용품에 관심이 많다.","D"],["공간에 소품을 놓을 때, 어울림의 정도와 최적의 위치를 고민한다.","D"],["내 방의 가구배치나 커튼, 이불 등의 선택은 직접하는 편이다.","D"],["무대 및 공연장 세트를 연출, 공간구성을 해보고 싶다.","D"],["미래에 내가 살 집을 내가 설계하고 디자인에 참여해 볼 생각이 있다.","D"],["공간에 들어설 때 내/외부 환경 안의 인테리어 요소들을 관찰하는 편이다.","D"],["평면과 입체에 대한 이해도가 높은 편이다.","D"],["자신에게 어울리는 패션과 타입을 잘 이해하고 소화하는 편이다.","E"],["직접 의상을 제작하고 디자인해보고 싶다.","E"],["시즌마다 유행하는 스타일링이나 패션흐름에 관심도가 높다.","E"],["평소 친구, 가족들에게 어울리는 옷이나 아이템을 잘 골라주는 편이다.","E"],["좋아하는 브랜드나 존경하는 디자이너가 있다면 그 이유를 명확하게 설명할 수 있다.","E"],["평소 패션에 관심이 많아 옷이나 악세사리 지출이 가장 많다.","E"],["전체적인 조화를 위해 신발과 악세사리 등 디테일에 신경을 많이 쓰는 편이다.","E"],["자신에게 어울리는 퍼스널 컬러를 잘 알고 있다.","E"],["만드는 것을 좋아하고, 손재주가 있다.","F"],["직접 만든 핸드메이드 제품을 즐겨찾는 편이다.","F"],["재료에 대한 이해도가 높고 소재와 색상에 민감하다.","F"],["보석, 귀금속 등 소재를 선택하여 직접 쥬얼리 디자인을 해보고 싶다.","F"],["손을 쓰는 일, 무엇인가를 만들 때 즐거움을 느낀다.","F"],["상품의 패턴, 장식 등의 세세한 디자인 요소에 대한 관심도가 높다.","F"],["만들어져 있는 완제품이 아닌 DIY로 직접 제작해서 나만의 굿즈를 만들어 보고 싶다.","F"],["다양한 핸드메이드 클래스에 관심이 많다.","F"]];
@@ -316,6 +318,7 @@ function showResult(){
   const tops=ORDER.filter(t=>score[t]===max && max>0);
   const top=tops[0]||ORDER[0];
   lastTop=top;
+  logResult(top, score);
   const r=results[top]||{major:top,mdesc:"",career:""};
 
   document.getElementById('r-type').textContent=`${top} TYPE`;
@@ -341,6 +344,19 @@ function showResult(){
     setTimeout(()=>col.querySelector('.vbar').style.height=(score[t]/denom*100)+'%',60);
   });
   show('result');
+}
+
+// 결과를 비공개 응답 시트로 전송 (익명, 한 번만)
+let logged=false;
+function logResult(top, score){
+  if(!SUBMIT_URL || logged) return;
+  logged=true;
+  const checkedTexts = items.filter(it=>checked.has(it.id)).map(it=>it.t);
+  try{
+    fetch(SUBMIT_URL,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({top:top,scores:score,checked:checkedTexts})});
+  }catch(e){}
 }
 
 function showExplore(){ renderExplore(); show('explore'); }
