@@ -115,6 +115,23 @@
     border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.7;}
   .ecard .ecareer b{color:var(--accent);font-weight:800;display:block;margin-bottom:4px;font-size:12px;}
 
+  /* 주요 대학 · 예시 이미지 */
+  .runi{margin-top:20px;text-align:left;background:var(--bg);border:1px solid var(--line);
+    border-radius:10px;padding:16px 18px;}
+  .runi h4{font-size:13px;color:var(--accent);margin-bottom:8px;font-weight:800;}
+  #r-uni{font-size:14.5px;color:#4a463f;line-height:1.7;white-space:pre-line;}
+  .rgallery-wrap{margin-top:20px;text-align:left;}
+  .rgallery-wrap h4{font-size:13px;color:var(--accent);margin-bottom:10px;font-weight:800;}
+  .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+  .gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;
+    border:1px solid var(--line);background:#efe9e2;display:block;cursor:zoom-in;}
+  .ecard .emake{margin-top:13px;}
+  .ecard .emake > b{color:var(--accent);font-weight:800;display:block;margin-bottom:8px;font-size:12px;}
+  .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:100;
+    align-items:center;justify-content:center;padding:20px;cursor:zoom-out;}
+  .lightbox.on{display:flex;}
+  .lightbox img{max-width:100%;max-height:100%;border-radius:8px;}
+
   .credit{text-align:center;color:var(--sub);font-size:12.5px;margin-top:40px;padding-top:20px;border-top:1px solid var(--line);}
   .loading{text-align:center;padding:80px 20px;color:var(--sub);}
   .err{background:#fdecea;color:#b23c2b;border-radius:12px;padding:16px;font-size:14px;margin-top:20px;}
@@ -182,6 +199,14 @@
         <h4>이런 진로가 어울려요</h4>
         <div id="r-desc"></div>
       </div>
+      <div class="runi" id="r-uni-wrap" style="display:none">
+        <h4>주요 대학</h4>
+        <div id="r-uni"></div>
+      </div>
+      <div class="rgallery-wrap" id="r-gallery-wrap" style="display:none">
+        <h4>이 분야에서는 이런 걸 만들어요</h4>
+        <div class="gallery" id="r-gallery"></div>
+      </div>
     </div>
     <div class="again">
       <button class="btn" onclick="showExplore()">다른 학과 둘러보기</button>
@@ -201,6 +226,7 @@
   </section>
 
   <footer class="credit">ⓒ 빛과그림자 디자인교육원 · 디자인 학과 성향 테스트</footer>
+  <div id="lightbox" class="lightbox" onclick="closeLB()"><img id="lb-img" src="" alt="예시 이미지"></div>
 </div>
 
 <script>
@@ -254,12 +280,16 @@ async function loadData(){
     const iMajor=col(h=>h.includes("학과")&&!h.includes("설명"),1);
     const iMDesc=col(h=>h.includes("학과설명")||h.includes("소개"));
     const iCareer=col(h=>h.includes("진로"), col(h=>h.includes("설명")&&!h.includes("학과"),3));
+    const iUni=col(h=>h.includes("대학")||h.includes("학교"));
+    const iImg=col(h=>h.includes("이미지")||h.includes("사진"));
     results={};
     rrows.slice(1).filter(r=>r[iType]&&r[iType].trim()).forEach(r=>{
       results[r[iType].trim().toUpperCase()]={
         major:(r[iMajor]||"").trim(),
         mdesc:iMDesc>=0?(r[iMDesc]||"").trim():"",
-        career:(r[iCareer]||"").trim()
+        career:(r[iCareer]||"").trim(),
+        unis:iUni>=0?(r[iUni]||"").trim():"",
+        imgs:iImg>=0?splitImgs(r[iImg]):[]
       };
     });
     if(!questions.length) throw new Error("empty");
@@ -268,6 +298,17 @@ async function loadData(){
     results = FALLBACK_R;
   }
 }
+
+// 구글 드라이브 공유 링크 → 표시용 이미지 URL (일반 이미지 URL은 그대로)
+function driveImg(url){
+  url=(url||"").trim(); if(!url) return "";
+  const m=url.match(/\/d\/([-\w]{20,})/)||url.match(/[?&]id=([-\w]{20,})/);
+  return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w1600`:url;
+}
+function splitImgs(s){ return (s||"").split(/[\n,]+/).map(driveImg).filter(Boolean); }
+function galleryHTML(imgs){ return imgs.map(u=>`<img loading="lazy" src="${u}" alt="예시 이미지" onclick="openLB('${u}')">`).join(""); }
+function openLB(src){ document.getElementById('lb-img').src=src; document.getElementById('lightbox').classList.add('on'); }
+function closeLB(){ document.getElementById('lightbox').classList.remove('on'); }
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
@@ -327,6 +368,12 @@ function showResult(){
   md.textContent=r.mdesc||"";
   md.style.display=r.mdesc?"block":"none";
   document.getElementById('r-desc').textContent=r.career||"";
+  const uniWrap=document.getElementById('r-uni-wrap');
+  if(r.unis){ document.getElementById('r-uni').textContent=r.unis; uniWrap.style.display='block'; }
+  else uniWrap.style.display='none';
+  const gWrap=document.getElementById('r-gallery-wrap'), imgs=r.imgs||[];
+  if(imgs.length){ document.getElementById('r-gallery').innerHTML=galleryHTML(imgs); gWrap.style.display='block'; }
+  else gWrap.style.display='none';
   const tieEl=document.getElementById('r-tie');
   if(max===0){ tieEl.textContent="체크된 문항이 없어요. 다시 해볼까요?"; }
   else if(tops.length>1){ tieEl.textContent=`동점 유형: ${tops.map(t=>results[t]?.major||t).join(" · ")} — 두 분야 모두 잘 맞아요!`; }
@@ -369,6 +416,8 @@ function renderExplore(){
       <div class="emajor">${r.major||t}${me?'<span class="me-badge">내 결과</span>':''}</div>`;
     if(r.mdesc) html+=`<div class="emdesc">${r.mdesc}</div>`;
     if(r.career) html+=`<div class="ecareer"><b>이런 진로가 어울려요</b>${r.career}</div>`;
+    if(r.unis) html+=`<div class="ecareer"><b>주요 대학</b>${(r.unis).replace(/\n+/g,"<br>")}</div>`;
+    if(r.imgs&&r.imgs.length) html+=`<div class="emake"><b>이런 걸 만들어요</b><div class="gallery">${galleryHTML(r.imgs)}</div></div>`;
     card.innerHTML=html;
     box.appendChild(card);
   });
