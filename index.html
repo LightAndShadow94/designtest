@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나에게 맞는 디자인 학과는?</title>
+<style>
+  :root{
+    --bg:#FBF7F4; --card:#FFFFFF; --ink:#2B2B2B; --sub:#8A8A8A;
+    --line:#ECE4DE; --accent:#B41B34; --accent-soft:#FCEEF0; --accent-deep:#8A1327;
+    --gold:#E9A100; --orange:#E9700A;
+    --shadow:0 2px 10px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* 사이트 공통 빨간 헤더 */
+  .site-header{background:var(--accent);padding:15px 16px 13px;text-align:center;}
+  .site-header .logo{display:block;margin:0 auto;width:min(86%,360px);height:auto;}
+  .site-header .subtitle{color:#fff;font-size:12.5px;font-weight:800;letter-spacing:2px;
+    margin:9px auto 0;padding-top:8px;max-width:min(86%,360px);
+    border-top:1px solid rgba(255,255,255,.28);}
+  .wrap{max-width:720px;margin:0 auto;padding:24px 20px 80px;}
+  .screen{display:none;animation:fade .4s ease;}
+  .screen.on{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  /* intro */
+  .hero{text-align:center;padding:36px 24px 36px;}
+  .badge{display:inline-block;font-size:13px;letter-spacing:.08em;color:var(--accent);
+    background:var(--accent-soft);padding:6px 14px;border-radius:999px;font-weight:800;margin-bottom:20px;}
+  h1{font-size:32px;font-weight:800;letter-spacing:-.02em;line-height:1.3;}
+  h1 .pt{color:var(--accent);}
+  .lead{color:var(--sub);margin:16px auto 0;max-width:460px;font-size:16px;}
+  .steps{display:flex;gap:12px;justify-content:center;margin:34px 0 10px;flex-wrap:wrap;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+    width:190px;text-align:left;box-shadow:var(--shadow);}
+  .step b{display:block;color:var(--accent);font-size:13px;margin-bottom:4px;font-weight:800;}
+  .step span{font-size:14px;color:var(--sub);}
+  .btn{display:inline-block;border:none;cursor:pointer;font-family:inherit;
+    background:var(--accent);color:#fff;font-size:16px;font-weight:800;
+    padding:15px 42px;border-radius:9px;box-shadow:var(--shadow);transition:transform .12s,filter .12s;}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.05);}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none;}
+  .cta{margin-top:36px;}
+
+  /* test */
+  .topbar{position:sticky;top:0;z-index:5;background:rgba(251,247,244,.93);
+    backdrop-filter:blur(8px);padding:16px 0 12px;margin-bottom:8px;}
+  .topbar h2{font-size:18px;font-weight:700;}
+  .topbar p{font-size:13px;color:var(--sub);margin-top:2px;}
+  .bar{height:8px;background:var(--line);border-radius:99px;margin-top:12px;overflow:hidden;}
+  .bar > i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s;}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:9px;
+    padding:15px 16px;margin:9px 0;display:flex;gap:13px;align-items:flex-start;
+    cursor:pointer;transition:border-color .15s,background .15s;box-shadow:var(--shadow);}
+  .q:hover{border-color:var(--accent);background:#FFFBFB;}
+  .q.checked{border-color:var(--accent);background:var(--accent-soft);}
+  .box{flex:0 0 24px;height:24px;border:2px solid #cdc6bb;border-radius:6px;margin-top:2px;
+    display:grid;place-items:center;transition:.15s;}
+  .q.checked .box{background:var(--accent);border-color:var(--accent);}
+  .box svg{width:14px;height:14px;stroke:#fff;stroke-width:3;fill:none;
+    opacity:0;transform:scale(.5);transition:.15s;}
+  .q.checked .box svg{opacity:1;transform:scale(1);}
+  .q .txt{font-size:15.5px;padding-top:1px;}
+  .submit{margin:26px 0 0;text-align:center;}
+  .count-note{font-size:14px;color:var(--sub);margin-bottom:14px;}
+  .nav{display:flex;gap:10px;justify-content:center;margin-top:26px;}
+  .nav .btn{padding:14px 40px;font-size:16px;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none;box-shadow:none;}
+  .hint{text-align:center;margin-top:12px;font-size:13.5px;color:var(--accent);font-weight:600;}
+
+  /* result */
+  .rcard{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:34px 26px;text-align:center;box-shadow:var(--shadow);}
+  .rcard + .rcard{margin-top:16px;}
+  .rcard.chart-card{padding:28px 24px;}
+  .rtype{font-size:15px;font-weight:700;color:var(--accent);letter-spacing:.1em;}
+  .rmajor{font-size:30px;font-weight:800;margin:10px 0 4px;letter-spacing:-.02em;}
+  .rtag{color:var(--sub);font-size:14px;}
+  .rmajordesc{margin-top:20px;font-size:14.5px;color:#4a463f;line-height:1.75;text-align:center;padding:0 2px;}
+  .rdesc{margin-top:20px;text-align:left;background:var(--bg);border-radius:10px;
+    padding:18px 20px;font-size:14.5px;color:#4a463f;border:1px solid var(--line);}
+  .rdesc h4{font-size:13px;color:var(--accent);margin-bottom:8px;letter-spacing:.04em;font-weight:800;}
+  .tie{margin-top:14px;font-size:14px;color:var(--sub);}
+  .chart-head{margin:0 0 14px;font-size:15px;font-weight:700;color:var(--ink);}
+  .vchart{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;margin:6px 0 4px;}
+  .vcol{flex:1;display:flex;flex-direction:column;align-items:center;}
+  .vnum{font-size:13px;font-weight:800;color:var(--sub);margin-bottom:6px;}
+  .vcol.top .vnum{color:var(--accent);}
+  .vtrack{height:150px;width:100%;display:flex;align-items:flex-end;justify-content:center;}
+  .vbar{width:62%;max-width:34px;height:0;background:#d9cfc0;border-radius:8px 8px 0 0;
+    transition:height .7s cubic-bezier(.2,.8,.2,1);}
+  .vcol.top .vbar{background:var(--accent);}
+  .vlab{margin-top:10px;width:26px;height:26px;border-radius:7px;background:var(--line);color:#8a857d;
+    font-weight:800;font-size:13px;display:grid;place-items:center;}
+  .vcol.top .vlab{background:var(--accent);color:#fff;}
+  .again{margin-top:28px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+
+  /* 학과 둘러보기 */
+  .explore-h{font-size:22px;font-weight:800;text-align:center;margin-top:8px;}
+  .explore-sub{text-align:center;color:var(--sub);font-size:14px;margin:6px 0 20px;}
+  .ecard{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:20px 22px;margin:12px 0;text-align:left;box-shadow:var(--shadow);}
+  .ecard.me{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft),var(--shadow);}
+  .ecard .etype{font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.08em;}
+  .ecard .emajor{font-size:19px;font-weight:800;margin:3px 0 9px;}
+  .me-badge{display:inline-block;margin-left:8px;font-size:11px;background:var(--accent);color:#fff;
+    border-radius:6px;padding:2px 8px;font-weight:800;vertical-align:middle;}
+  .ecard .emdesc{font-size:14px;color:#4a463f;line-height:1.75;}
+  .ecard .ecareer{margin-top:13px;font-size:13px;color:var(--sub);background:var(--bg);
+    border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.7;}
+  .ecard .ecareer b{color:var(--accent);font-weight:800;display:block;margin-bottom:4px;font-size:12px;}
+
+  .credit{text-align:center;color:var(--sub);font-size:12.5px;margin-top:40px;padding-top:20px;border-top:1px solid var(--line);}
+  .loading{text-align:center;padding:80px 20px;color:var(--sub);}
+  .err{background:#fdecea;color:#b23c2b;border-radius:12px;padding:16px;font-size:14px;margin-top:20px;}
+  @media(max-width:520px){h1{font-size:26px}.rmajor{font-size:24px}.step{width:100%}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <img class="logo" src="academy-logo.svg" alt="빛과그림자 디자인교육원">
+  <div class="subtitle">디자인 학과 성향 테스트</div>
+</header>
+<div class="wrap">
+
+  <!-- INTRO -->
+  <section id="intro" class="screen on">
+    <div class="hero">
+      <span class="badge">디자인 적성 체크</span>
+      <h1>나에게 맞는<br><span class="pt">디자인 학과</span>는?</h1>
+      <p class="lead">평소의 나를 떠올리며, 해당되는 문항에 체크해 보세요.
+        체크가 가장 많이 모인 분야가 나의 성향에 가까운 학과예요.</p>
+      <div class="steps">
+        <div class="step"><b>STEP 1</b><span>문항을 읽고 나에게 해당되면 체크</span></div>
+        <div class="step"><b>STEP 2</b><span>다 체크했으면 결과 보기</span></div>
+        <div class="step"><b>STEP 3</b><span>추천 학과와 진로 확인!</span></div>
+      </div>
+      <div class="cta"><button class="btn" onclick="start()">테스트 시작하기</button></div>
+    </div>
+  </section>
+
+  <!-- LOADING -->
+  <section id="loading" class="screen">
+    <div class="loading">문항을 불러오는 중이에요…</div>
+  </section>
+
+  <!-- TEST -->
+  <section id="test" class="screen">
+    <div class="topbar">
+      <h2>해당되는 문항에 체크해 주세요</h2>
+      <p>페이지 <span id="pageNow">1</span> / <span id="pageTot">1</span> · <span id="checked">0</span>개 체크됨</p>
+      <div class="bar"><i id="prog"></i></div>
+    </div>
+    <div id="qlist"></div>
+    <div class="nav">
+      <button class="btn ghost" id="prevBtn" onclick="prevPage()">이전</button>
+      <button class="btn" id="nextBtn" onclick="nextPage()">다음</button>
+      <button class="btn" id="doneBtn" onclick="showResult()" style="display:none">결과 보기</button>
+    </div>
+    <p class="hint" id="pageHint" style="visibility:hidden">이 페이지에서 최소 1개 이상 체크해 주세요</p>
+    <p class="count-note" style="text-align:center;margin-top:8px">솔직하게 체크할수록 결과가 정확해져요 :)</p>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="screen">
+    <div class="rcard chart-card">
+      <div class="chart-head" style="text-align:center">유형별 선택 수</div>
+      <div class="vchart" id="r-chart"></div>
+    </div>
+    <div class="rcard">
+      <div class="rtype" id="r-type"></div>
+      <div class="rmajor" id="r-major"></div>
+      <div class="rtag">추천 학과</div>
+      <div id="r-tie" class="tie"></div>
+      <div class="rmajordesc" id="r-mdesc"></div>
+      <div class="rdesc">
+        <h4>이런 진로가 어울려요</h4>
+        <div id="r-desc"></div>
+      </div>
+    </div>
+    <div class="again">
+      <button class="btn" onclick="showExplore()">다른 학과 둘러보기</button>
+      <button class="btn ghost" onclick="location.reload()">다시 하기</button>
+    </div>
+  </section>
+
+  <!-- EXPLORE -->
+  <section id="explore" class="screen">
+    <h2 class="explore-h">디자인 학과 둘러보기</h2>
+    <p class="explore-sub">6가지 디자인 분야를 살펴보세요</p>
+    <div id="explore-list"></div>
+    <div class="again">
+      <button class="btn ghost" onclick="show('result')">← 결과로 돌아가기</button>
+      <button class="btn ghost" onclick="location.reload()">다시 하기</button>
+    </div>
+  </section>
+
+  <footer class="credit">ⓒ 빛과그림자 디자인교육원 · 디자인 학과 성향 테스트</footer>
+</div>
+
+<script>
+const SHEET_ID = "18vIz9_qpwZ29bz5xSZY8Tg7t9fVGLYdCwe1krFKZFPI";
+const gviz = name => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(name)}`;
+
+// ---- fallback data (시트 못 읽을 때 대비) ----
+const FALLBACK_Q = [["광고영상이나 뮤직비디오를 볼 때, 색감이나 소품 등 화면구성을 눈여겨 보는 편이다.","A"],["발표자료(PPT)는 기왕이면 이쁘게 만드는 것이 좋다.","A"],["인터넷이나 책 표지에서 예쁜 글씨체를 보면 무슨 폰트인지 궁금하다.","A"],["스마트폰으로 동영상을 찍고 재밌게 편집해본 적이 있다.","A"],["판타지, SF영화의 특수효과 메이킹 영상을 보는 것을 좋아한다.","A"],["스마트폰의 테마나 바탕화면을 꾸미는데 시간을 할애하는 경우가 종종있다.","A"],["영화 포스터나 예쁜 광고물을 버리지 않고 보관했던 적이 있다.","A"],["1인 미디어에 관심이 많아 영상제작을 해보고 싶다.","A"],["등하교길, 이동시에 즐겨찾는 웹툰/웹소설이 있다.","B"],["만화카페에 종종 가서 시간을 보낸다.","B"],["사람, 동물을 캐릭터화 시켜서 그리는 것을 좋아한다.","B"],["영화, 애니메이션, 만화, 게임, 소설과 같이 스토리가 있는 시각매체를 좋아한다.","B"],["집에 직접 구매한 만화책이 있다.","B"],["웹사이트를 통해 좋아하는 게임 캐릭터의 설정이나 디자인을 찾아보곤 한다.","B"],["좋아하는 만화/웹툰작가나 게임/애니메이션 제작사를 나열할 수 있다.","B"],["안보고 그릴 수 있는 캐릭터가 있다.","B"],["전자제품을 선택할 때, 기능보다는 디자인에 무게를 두는 편이다.","C"],["길 가다가 보이는 자동차들의 디자인을 살펴보는 것이 좋다.","C"],["생활에 불편한 요소를 개선하는 제품디자인을 하고 싶다.","C"],["굿즈나 팬시제품 등 디자인 소품에 관심이 많다.","C"],["형태사진을 찍을 때, 사물이 가진 예쁜 각도를 찾아 설정하는 편이다.","C"],["자신이 생각하는 머리 속 이미지를 3D(입체)로 스케치할 수 있다.","C"],["평소에 주위 물체를 세심하게 관찰하는 편이다.","C"],["사물을 고를 때 디자인 요소 중 재질과 컬러에 민감한 편이다.","C"],["가구를 직접 조립하거나 새로운 다자인 구상을 즐기는 편이다.","D"],["조명기기나 인테리어 용품에 관심이 많다.","D"],["공간에 소품을 놓을 때, 어울림의 정도와 최적의 위치를 고민한다.","D"],["내 방의 가구배치나 커튼, 이불 등의 선택은 직접하는 편이다.","D"],["무대 및 공연장 세트를 연출, 공간구성을 해보고 싶다.","D"],["미래에 내가 살 집을 내가 설계하고 디자인에 참여해 볼 생각이 있다.","D"],["공간에 들어설 때 내/외부 환경 안의 인테리어 요소들을 관찰하는 편이다.","D"],["평면과 입체에 대한 이해도가 높은 편이다.","D"],["자신에게 어울리는 패션과 타입을 잘 이해하고 소화하는 편이다.","E"],["직접 의상을 제작하고 디자인해보고 싶다.","E"],["시즌마다 유행하는 스타일링이나 패션흐름에 관심도가 높다.","E"],["평소 친구, 가족들에게 어울리는 옷이나 아이템을 잘 골라주는 편이다.","E"],["좋아하는 브랜드나 존경하는 디자이너가 있다면 그 이유를 명확하게 설명할 수 있다.","E"],["평소 패션에 관심이 많아 옷이나 악세사리 지출이 가장 많다.","E"],["전체적인 조화를 위해 신발과 악세사리 등 디테일에 신경을 많이 쓰는 편이다.","E"],["자신에게 어울리는 퍼스널 컬러를 잘 알고 있다.","E"],["만드는 것을 좋아하고, 손재주가 있다.","F"],["직접 만든 핸드메이드 제품을 즐겨찾는 편이다.","F"],["재료에 대한 이해도가 높고 소재와 색상에 민감하다.","F"],["보석, 귀금속 등 소재를 선택하여 직접 쥬얼리 디자인을 해보고 싶다.","F"],["손을 쓰는 일, 무엇인가를 만들 때 즐거움을 느낀다.","F"],["상품의 패턴, 장식 등의 세세한 디자인 요소에 대한 관심도가 높다.","F"],["만들어져 있는 완제품이 아닌 DIY로 직접 제작해서 나만의 굿즈를 만들어 보고 싶다.","F"],["다양한 핸드메이드 클래스에 관심이 많다.","F"]];
+const FALLBACK_R = {
+  A:{major:"시각디자인 / 영상미디어",mdesc:"",career:"편집 디자이너, 웹 디자이너, 광고 디자이너, 게임 디자이너, 영상 디자이너, 아트 디렉터, 포장 디자이너, 전시 기획 디자이너, 그래픽 디자이너, 모바일 인터페이스 디자이너, 일러스트레이터 등"},
+  B:{major:"만화 / 애니메이션",mdesc:"",career:"애니메이션 기획자, 게임 디자이너, 웹툰작가, 캐릭터 디자이너, 웹 애니메이터, 영상기획자, 스토리 보드 작가, 카툰 일러스트레이션, 모바일 게임 디자이너, 배경 일러스트레이션 등"},
+  C:{major:"산업디자인 / 공업디자인",mdesc:"",career:"제품 디자이너, 자동차 디자이너, 팬시 디자이너, 리모델링 디자이너, 가구 디자이너, 전자제품 디자이너, 환경 디자이너, 3D 디자이너, 익스테리어 디자이너, 웹 디자이너 등"},
+  D:{major:"실내디자인 / 건축디자인",mdesc:"",career:"인테리어 디자이너, 실내 디자이너, 무대 디자이너, 가구 디자이너, 건축설계 디자이너, 세트 디자이너, 공간 디자이너, 조명 디자이너, 환경 디자이너, 공공 디자이너 등"},
+  E:{major:"패션디자인 / 의상디자인",mdesc:"",career:"패션 디자이너, 스타일리스트, 패션 일러스트레이터, 직물 디자이너, 패턴메이커, 패션코디네이터, 패션 디스플레이어, 패션 저널리스트, 의상평론가, 브랜드 매니저, 컬러리스트, 뷰티 아티스트 등"},
+  F:{major:"공예디자인 / 텍스타일",mdesc:"",career:"주얼리 디자이너, 텍스타일 디자이너, 장신구 디자이너, 도자 디자이너, 큐레이터, 금속 공예가, 세라믹 디자이너, 문화상품 디자이너, 섬유 디자이너, 목공 디자이너, 시계 디자이너, 오브제 디자이너 등"}
+};
+const ORDER = ["A","B","C","D","E","F"];
+
+let questions = [], results = {};
+
+// ---- CSV 파서 ----
+function parseCSV(text){
+  const rows=[]; let row=[], cur="", q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=c; }
+    else { if(c==='"')q=true; else if(c===','){row.push(cur);cur="";}
+      else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur="";}
+      else if(c!=='\r')cur+=c; }
+  }
+  if(cur.length||row.length){row.push(cur);rows.push(row);}
+  return rows;
+}
+
+async function loadData(){
+  try{
+    const [qt,rt] = await Promise.all([
+      fetch(gviz("문항")).then(r=>r.text()),
+      fetch(gviz("결과")).then(r=>r.text())
+    ]);
+    const qr=parseCSV(qt).slice(1).filter(r=>r[1]&&r[2]);
+    questions = qr.map(r=>[r[1].trim(), r[2].trim().toUpperCase()]);
+    // 결과 시트: 열 "이름"으로 찾기 (열 순서 바뀌어도 OK)
+    const rrows=parseCSV(rt).filter(r=>r.some(c=>c&&c.trim()));
+    const norm=h=>(h||"").replace(/\s+/g,"");
+    const head=(rrows[0]||[]).map(norm);
+    const col=(pred,fb=-1)=>{const i=head.findIndex(pred);return i>=0?i:fb;};
+    const iType=col(h=>h.includes("타입")||/type/i.test(h),0);
+    const iMajor=col(h=>h.includes("학과")&&!h.includes("설명"),1);
+    const iMDesc=col(h=>h.includes("학과설명")||h.includes("소개"));
+    const iCareer=col(h=>h.includes("진로"), col(h=>h.includes("설명")&&!h.includes("학과"),3));
+    results={};
+    rrows.slice(1).filter(r=>r[iType]&&r[iType].trim()).forEach(r=>{
+      results[r[iType].trim().toUpperCase()]={
+        major:(r[iMajor]||"").trim(),
+        mdesc:iMDesc>=0?(r[iMDesc]||"").trim():"",
+        career:(r[iCareer]||"").trim()
+      };
+    });
+    if(!questions.length) throw new Error("empty");
+  }catch(e){
+    questions = FALLBACK_Q.map(x=>[x[0],x[1]]);
+    results = FALLBACK_R;
+  }
+}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
+
+const PAGE=8;
+let loaded=false, items=[], checked=new Set(), page=0, lastTop=null;
+const pageCount=()=>Math.ceil(items.length/PAGE);
+
+async function start(){
+  show('loading');
+  if(!loaded){ await loadData(); loaded=true; }
+  items=shuffle(questions.map((q,i)=>({t:q[0],type:q[1],id:i})));
+  checked=new Set(); page=0;
+  document.getElementById('pageTot').textContent=pageCount();
+  renderPage();
+  show('test');
+}
+
+function renderPage(){
+  const list=document.getElementById('qlist'); list.innerHTML="";
+  const s=page*PAGE;
+  items.slice(s,s+PAGE).forEach(it=>{
+    const d=document.createElement('div');
+    d.className='q'+(checked.has(it.id)?' checked':'');
+    d.innerHTML=`<div class="box"><svg viewBox="0 0 20 20"><polyline points="4,11 8,15 16,5"/></svg></div><div class="txt">${it.t}</div>`;
+    d.onclick=()=>{ checked.has(it.id)?checked.delete(it.id):checked.add(it.id); d.classList.toggle('checked'); updateCount(); };
+    list.appendChild(d);
+  });
+  const last=page>=pageCount()-1;
+  document.getElementById('pageNow').textContent=page+1;
+  document.getElementById('prevBtn').style.visibility=page===0?'hidden':'visible';
+  document.getElementById('nextBtn').style.display=last?'none':'inline-block';
+  document.getElementById('doneBtn').style.display=last?'inline-block':'none';
+  updateCount();
+  window.scrollTo(0,0);
+}
+function nextPage(){ if(page<pageCount()-1){page++;renderPage();} }
+function prevPage(){ if(page>0){page--;renderPage();} }
+function updateCount(){
+  document.getElementById('checked').textContent=checked.size;
+  document.getElementById('prog').style.width=((page+1)/pageCount()*100)+'%';
+}
+
+function showResult(){
+  const score={}; ORDER.forEach(t=>score[t]=0);
+  items.forEach(it=>{ if(checked.has(it.id)&&it.type in score)score[it.type]++; });
+  const max=Math.max(...ORDER.map(t=>score[t]));
+  const tops=ORDER.filter(t=>score[t]===max && max>0);
+  const top=tops[0]||ORDER[0];
+  lastTop=top;
+  const r=results[top]||{major:top,mdesc:"",career:""};
+
+  document.getElementById('r-type').textContent=`${top} TYPE`;
+  document.getElementById('r-major').textContent=r.major;
+  const md=document.getElementById('r-mdesc');
+  md.textContent=r.mdesc||"";
+  md.style.display=r.mdesc?"block":"none";
+  document.getElementById('r-desc').textContent=r.career||"";
+  const tieEl=document.getElementById('r-tie');
+  if(max===0){ tieEl.textContent="체크된 문항이 없어요. 다시 해볼까요?"; }
+  else if(tops.length>1){ tieEl.textContent=`동점 유형: ${tops.map(t=>results[t]?.major||t).join(" · ")} — 두 분야 모두 잘 맞아요!`; }
+  else tieEl.textContent="";
+
+  const chart=document.getElementById('r-chart'); chart.innerHTML="";
+  const denom=max||1;
+  ORDER.forEach(t=>{
+    const isTop=tops.includes(t)&&max>0;
+    const col=document.createElement('div'); col.className='vcol'+(isTop?' top':'');
+    col.innerHTML=`<div class="vnum">${score[t]}</div>
+      <div class="vtrack"><div class="vbar" style="height:0"></div></div>
+      <div class="vlab">${t}</div>`;
+    chart.appendChild(col);
+    setTimeout(()=>col.querySelector('.vbar').style.height=(score[t]/denom*100)+'%',60);
+  });
+  show('result');
+}
+
+function showExplore(){ renderExplore(); show('explore'); }
+function renderExplore(){
+  const box=document.getElementById('explore-list'); box.innerHTML="";
+  ORDER.forEach(t=>{
+    const r=results[t]||{}; const me=(t===lastTop);
+    const card=document.createElement('div'); card.className='ecard'+(me?' me':'');
+    let html=`<div class="etype">${t} TYPE</div>
+      <div class="emajor">${r.major||t}${me?'<span class="me-badge">내 결과</span>':''}</div>`;
+    if(r.mdesc) html+=`<div class="emdesc">${r.mdesc}</div>`;
+    if(r.career) html+=`<div class="ecareer"><b>이런 진로가 어울려요</b>${r.career}</div>`;
+    card.innerHTML=html;
+    box.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>
