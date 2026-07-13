@@ -315,7 +315,7 @@ function fmtUnis(part){
   return (part||"").split(",").map(item=>{
     item=item.trim(); if(!item) return "";
     const j=item.search(/[-–·]/);           // 학교-학과 구분
-    if(j>0) return `<b class="uni-school">${item.slice(0,j).trim()}</b> ${item.slice(j+1).trim()}`;
+    if(j>0) return `<b class="uni-school">${item.slice(0,j).trim()}</b>${item.charAt(j)}${item.slice(j+1).trim()}`;
     return item;
   }).filter(Boolean).join(", ");
 }
