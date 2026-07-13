@@ -45,6 +45,7 @@
     padding:15px 42px;border-radius:9px;box-shadow:var(--shadow);transition:transform .12s,filter .12s;}
   .btn:hover{transform:translateY(-1px);filter:brightness(1.05);}
   .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none;}
+  .temp-btn{border:1px dashed var(--sub);background:transparent;color:var(--sub);font-family:inherit;font-size:13px;padding:8px 16px;border-radius:8px;cursor:pointer;margin-top:14px;}
   .cta{margin-top:36px;}
 
   /* test */
@@ -162,6 +163,7 @@
         <div class="step"><b>STEP 3</b><span>추천 학과와 진로 확인!</span></div>
       </div>
       <div class="cta"><button class="btn" onclick="start()">테스트 시작하기</button></div>
+      <!-- [임시] 확인용: 필요 없어지면 이 줄 삭제 --><div><button class="temp-btn" onclick="previewResult()">⚙️ 결과 미리보기 (임시)</button></div>
     </div>
   </section>
 
@@ -425,6 +427,16 @@ function logResult(top, score){
       headers:{"Content-Type":"text/plain;charset=utf-8"},
       body:JSON.stringify({top:top,scores:score,checked:checkedTexts})});
   }catch(e){}
+}
+
+// [임시] 설문 없이 결과창 바로 보기 (확인용) — 필요 없어지면 이 함수와 인트로 버튼 삭제
+async function previewResult(){
+  show('loading');
+  if(!loaded){ await loadData(); loaded=true; }
+  items=[{t:'',type:'A',id:0},{t:'',type:'A',id:1},{t:'',type:'B',id:2}];
+  checked=new Set([0,1,2]);
+  logged=true; // 미리보기는 통계에 기록 안 함
+  showResult();
 }
 
 function showExplore(){ renderExplore(); show('explore'); }
