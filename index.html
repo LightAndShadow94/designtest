@@ -120,11 +120,12 @@
   .runi{margin-top:20px;text-align:left;background:var(--bg);border:1px solid var(--line);
     border-radius:10px;padding:16px 18px;}
   .runi h4{font-size:13px;color:var(--accent);margin-bottom:8px;font-weight:800;}
-  #r-uni{font-size:13px;color:#4a463f;line-height:1.9;}
-  .uni-row{margin:6px 0;}
-  .uni-row:first-child{margin-top:0;}
+  #r-uni{font-size:13px;color:#4a463f;}
+  .uni-table{width:100%;border-collapse:collapse;margin-top:2px;}
+  .uni-table th,.uni-table td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top;}
+  .uni-table th.uni-region{white-space:nowrap;width:1%;color:var(--accent);font-weight:800;font-size:12.5px;background:rgba(180,27,52,.05);}
+  .uni-table td{color:#4a463f;line-height:1.8;}
   .uni-item{white-space:nowrap;}
-  .uni-region{font-weight:800;color:var(--accent);margin-right:8px;}
   .uni-school{font-weight:800;color:var(--ink);}
   .rgallery-wrap{margin-top:20px;text-align:left;}
   .rgallery-wrap h4{font-size:13px;color:var(--accent);margin-bottom:10px;font-weight:800;}
@@ -347,11 +348,12 @@ function uniHTML(s){
     else if(cur){ cur.rest+=","+line; }
     else { cur={label:"", rest:line}; regions.push(cur); }
   });
-  return regions.map(r=>{
+  const rows=regions.map(r=>{
     const items=(r.rest||"").split(",").map(x=>x.trim()).filter(Boolean).map(fmtItem).join(", ");
     if(!items) return "";
-    return `<div class="uni-row">${r.label?`<span class="uni-region">${r.label}</span>`:""}${items}</div>`;
-  }).join("");
+    return `<tr><th class="uni-region">${r.label||""}</th><td>${items}</td></tr>`;
+  }).filter(Boolean).join("");
+  return rows?`<table class="uni-table">${rows}</table>`:"";
 }
 function galleryHTML(imgs){ return imgs.map(o=>`<figure class="gitem">${o.cap?`<figcaption>${o.cap}</figcaption>`:""}<img loading="lazy" src="${o.url}" alt="${o.cap||'예시 이미지'}" onclick="openLB('${o.url}')"></figure>`).join(""); }
 function openLB(src){ document.getElementById('lb-img').src=src; document.getElementById('lightbox').classList.add('on'); }
