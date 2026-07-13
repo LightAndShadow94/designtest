@@ -123,6 +123,7 @@
   .uni-row{margin:4px 0;}
   .uni-row:first-child{margin-top:0;}
   .uni-region{display:inline-block;font-weight:800;color:var(--accent);margin-right:7px;}
+  .uni-school{font-weight:800;color:var(--ink);}
   .rgallery-wrap{margin-top:20px;text-align:left;}
   .rgallery-wrap h4{font-size:13px;color:var(--accent);margin-bottom:10px;font-weight:800;}
   .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
@@ -309,13 +310,21 @@ function driveImg(url){
   return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w1600`:url;
 }
 function splitImgs(s){ return (s||"").split(/[\n,]+/).map(driveImg).filter(Boolean); }
-// "서울: 서울대, 국민대" 형식을 지역 강조 + 줄바꿈으로 렌더
+// "서울: 서울대-디자인과, 국민대-시각디자인과" → 지역 강조 + 학교 볼드 + 줄바꿈
+function fmtUnis(part){
+  return (part||"").split(",").map(item=>{
+    item=item.trim(); if(!item) return "";
+    const j=item.search(/[-–·]/);           // 학교-학과 구분
+    if(j>0) return `<b class="uni-school">${item.slice(0,j).trim()}</b> ${item.slice(j+1).trim()}`;
+    return item;
+  }).filter(Boolean).join(", ");
+}
 function uniHTML(s){
   return (s||"").split(/\n+/).map(line=>{
     line=line.trim(); if(!line) return "";
-    const i=line.indexOf(":");
-    if(i>0) return `<div class="uni-row"><span class="uni-region">${line.slice(0,i).trim()}</span>${line.slice(i+1).trim()}</div>`;
-    return `<div class="uni-row">${line}</div>`;
+    const i=line.indexOf(":");               // 지역: 대학들
+    if(i>0) return `<div class="uni-row"><span class="uni-region">${line.slice(0,i).trim()}</span>${fmtUnis(line.slice(i+1))}</div>`;
+    return `<div class="uni-row">${fmtUnis(line)}</div>`;
   }).join("");
 }
 function galleryHTML(imgs){ return imgs.map(u=>`<img loading="lazy" src="${u}" alt="예시 이미지" onclick="openLB('${u}')">`).join(""); }
