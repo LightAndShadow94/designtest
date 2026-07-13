@@ -131,6 +131,9 @@
   .gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
   .gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;
     border:1px solid var(--line);background:#efe9e2;display:block;cursor:zoom-in;}
+  .gitem{margin:0;text-align:center;}
+  .gitem figcaption{margin-top:7px;display:inline-block;font-size:11.5px;font-weight:800;
+    color:var(--accent);background:var(--accent-soft);border-radius:99px;padding:3px 11px;line-height:1.4;}
   .ecard .emake{margin-top:13px;}
   .ecard .emake > b{color:var(--accent);font-weight:800;display:block;margin-bottom:8px;font-size:12px;}
   .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:100;
@@ -312,7 +315,20 @@ function driveImg(url){
   const m=url.match(/\/d\/([-\w]{20,})/)||url.match(/[?&]id=([-\w]{20,})/);
   return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w1600`:url;
 }
-function splitImgs(s){ return (s||"").split(/[\n,]+/).map(driveImg).filter(Boolean); }
+function splitImgs(s){
+  const out=[];
+  (s||"").split(/\n+/).forEach(line=>{
+    line=line.trim(); if(!line) return;
+    if(line.includes("|")){                       // "캡션 | 링크" 한 줄 = 이미지 하나
+      const parts=line.split("|").map(x=>x.trim()).filter(Boolean);
+      const urlPart=parts.find(p=>/https?:\/\/|drive\.google/.test(p));
+      if(urlPart) out.push({url:driveImg(urlPart), cap:parts.filter(p=>p!==urlPart).join(" ")});
+    } else {                                       // 캡션 없는 줄(쉼표로 여러 링크 가능)
+      line.split(",").map(x=>x.trim()).filter(Boolean).forEach(u=>{ const url=driveImg(u); if(url) out.push({url,cap:""}); });
+    }
+  });
+  return out;
+}
 // "서울: 서울대-디자인과, 국민대-시각디자인과" → 지역 강조 + 학교 볼드 + 줄바꿈
 function fmtItem(item){
   const j=item.search(/[-–]/);   // 학교-학과 (·는 지역명 구분자라 제외)
@@ -337,7 +353,7 @@ function uniHTML(s){
     return `<div class="uni-row">${r.label?`<span class="uni-region">${r.label}</span>`:""}${items}</div>`;
   }).join("");
 }
-function galleryHTML(imgs){ return imgs.map(u=>`<img loading="lazy" src="${u}" alt="예시 이미지" onclick="openLB('${u}')">`).join(""); }
+function galleryHTML(imgs){ return imgs.map(o=>`<figure class="gitem"><img loading="lazy" src="${o.url}" alt="${o.cap||'예시 이미지'}" onclick="openLB('${o.url}')">${o.cap?`<figcaption>${o.cap}</figcaption>`:""}</figure>`).join(""); }
 function openLB(src){ document.getElementById('lb-img').src=src; document.getElementById('lightbox').classList.add('on'); }
 function closeLB(){ document.getElementById('lightbox').classList.remove('on'); }
 
