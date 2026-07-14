@@ -124,7 +124,7 @@
   .uni-table{width:100%;border-collapse:collapse;margin-top:2px;}
   .uni-table th,.uni-table td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top;}
   .uni-table th.uni-region{white-space:nowrap;width:1%;color:var(--accent);font-weight:800;font-size:12.5px;background:rgba(180,27,52,.05);}
-  .uni-table td{color:#4a463f;line-height:1.8;word-break:keep-all;}
+  .uni-table td{color:#4a463f;line-height:1.8;word-break:keep-all;overflow-wrap:anywhere;}
   .uni-item{white-space:nowrap;}
   .uni-school{font-weight:800;color:var(--ink);}
   .rgallery-wrap{margin-top:20px;text-align:left;}
@@ -145,7 +145,12 @@
   .credit{text-align:center;color:var(--sub);font-size:12.5px;margin-top:40px;padding-top:20px;border-top:1px solid var(--line);}
   .loading{text-align:center;padding:80px 20px;color:var(--sub);}
   .err{background:#fdecea;color:#b23c2b;border-radius:12px;padding:16px;font-size:14px;margin-top:20px;}
-  @media(max-width:520px){h1{font-size:26px}.rmajor{font-size:24px}.step{width:100%}.gallery{grid-template-columns:repeat(2,1fr);}.uni-item{white-space:normal;}.uni-table th.uni-region{white-space:normal;}.uni-table th,.uni-table td{padding:7px 8px;}}
+  @media(max-width:520px){h1{font-size:26px}.rmajor{font-size:24px}.step{width:100%}.gallery{grid-template-columns:repeat(2,1fr);}
+    .uni-item{white-space:normal;}
+    .uni-table,.uni-table tbody,.uni-table tr,.uni-table th,.uni-table td{display:block;width:auto;}
+    .uni-table tr{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;overflow:hidden;}
+    .uni-table th.uni-region{white-space:normal;width:auto;border:none;border-bottom:1px solid var(--line);border-radius:0;padding:6px 10px;}
+    .uni-table td{border:none;padding:8px 10px;}}
 </style>
 </head>
 <body>
